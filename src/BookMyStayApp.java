@@ -1,90 +1,71 @@
-abstract class Room {
+import java.util.HashMap;
+import java.util.Map;
 
-    protected int beds;
-    protected int size;
-    protected double price;
+/**
+ * UseCase3InventorySetup
+ *
+ * Demonstrates centralized room inventory management
+ * using HashMap as the single source of truth.
+ *
+ * @author Chani
+ * @version 3.0
+ */
 
-    public Room(int beds, int size, double price) {
-        this.beds = beds;
-        this.size = size;
-        this.price = price;
+/* RoomInventory class manages room availability */
+class RoomInventory {
+
+    private HashMap<String, Integer> inventory;
+
+    // Constructor initializes room inventory
+    public RoomInventory() {
+        inventory = new HashMap<>();
+
+        inventory.put("Single Room", 5);
+        inventory.put("Double Room", 3);
+        inventory.put("Suite Room", 2);
     }
 
-    public abstract String getRoomType();
-
-    public void displayRoomDetails() {
-        System.out.println("Room Type : " + getRoomType());
-        System.out.println("Beds      : " + beds);
-        System.out.println("Size      : " + size + " sq.ft");
-        System.out.println("Price     : ₹" + price);
-    }
-}
-
-/* Single Room Class */
-class SingleRoom extends Room {
-
-    public SingleRoom() {
-        super(1, 200, 2000);
+    // Get availability of a specific room type
+    public int getAvailability(String roomType) {
+        return inventory.getOrDefault(roomType, 0);
     }
 
-    public String getRoomType() {
-        return "Single Room";
-    }
-}
-
-/* Double Room Class */
-class DoubleRoom extends Room {
-
-    public DoubleRoom() {
-        super(2, 350, 3500);
+    // Update availability (increase or decrease)
+    public void updateAvailability(String roomType, int countChange) {
+        int current = inventory.getOrDefault(roomType, 0);
+        inventory.put(roomType, current + countChange);
     }
 
-    public String getRoomType() {
-        return "Double Room";
-    }
-}
+    // Display all inventory
+    public void displayInventory() {
+        System.out.println("\nCurrent Room Inventory:");
 
-/* Suite Room Class */
-class SuiteRoom extends Room {
-
-    public SuiteRoom() {
-        super(3, 500, 6000);
-    }
-
-    public String getRoomType() {
-        return "Suite Room";
+        for (Map.Entry<String, Integer> entry : inventory.entrySet()) {
+            System.out.println(entry.getKey() + " : " + entry.getValue() + " rooms available");
+        }
     }
 }
+
 
 public class BookMyStayApp {
     public static void main(String[] args) {
 
         System.out.println("=================================");
         System.out.println("      Book My Stay App");
-        System.out.println("      Version 2.0");
+        System.out.println("      Version 3.0");
         System.out.println("=================================");
 
-        // Creating room objects (Polymorphism)
-        Room single = new SingleRoom();
-        Room doubleRoom = new DoubleRoom();
-        Room suite = new SuiteRoom();
+        // Initialize inventory
+        RoomInventory inventory = new RoomInventory();
 
-        // Static availability variables
-        int singleAvailability = 5;
-        int doubleAvailability = 3;
-        int suiteAvailability = 2;
+        // Display inventory
+        inventory.displayInventory();
 
-        System.out.println("\n--- Room Details ---");
+        // Simulate booking (reduce availability)
+        System.out.println("\nBooking 1 Single Room...");
+        inventory.updateAvailability("Single Room", -1);
 
-        single.displayRoomDetails();
-        System.out.println("Available : " + singleAvailability);
-        System.out.println();
-
-        doubleRoom.displayRoomDetails();
-        System.out.println("Available : " + doubleAvailability);
-        System.out.println();
-
-        suite.displayRoomDetails();
-        System.out.println("Available : " + suiteAvailability);
+        // Show updated inventory
+        inventory.displayInventory();
     }
 }
